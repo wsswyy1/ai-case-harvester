@@ -164,20 +164,30 @@ export function emptySourceStats(enabled = true): SourceRunStats {
 // ---------------------------------------------------------------------------
 
 export interface HarvestQuery {
+  /** Only items created at or after this instant. */
   since: Date;
+  /** Upper bound on items returned per source. */
   limit: number;
+  /** Optional source-specific search override. */
   query?: string;
 }
 
+/** A source post as fetched, before eligibility and classification. */
 export interface RawCandidate {
   source: SourceName;
+  /** Source-native id (HN objectID, GitHub full_name, Reddit t3 id). */
   sourceId: string;
+  /** Canonical public URL of the post or repository on the source site. */
   sourceUrl: string;
   title: string;
   author: string;
+  /** Plain-text excerpt, HTML stripped, clipped. */
   excerpt: string;
+  /** Absolute http(s) links found in the post, in discovery order, de-duplicated. */
   discoveredUrls: string[];
+  /** ISO 8601 creation time on the source. */
   createdAt: string;
+  /** Original source payload for debugging. Not persisted. */
   raw: unknown;
 }
 
@@ -185,8 +195,14 @@ export interface CollectResult {
   items: RawCandidate[];
   stoppedOnRateLimit: boolean;
   retryAfterSeconds?: number;
+  /** Items returned by the source API (before any local filtering). */
   fetched: number;
+  /** Fetched items dropped by the collector (too old, malformed, deleted). */
+  skipped: number;
+  /** Requests or items that failed (HTTP errors, access denied). */
   failed: number;
+  /** Redacted, human-readable failure notes. */
+  errors: string[];
 }
 
 export interface RequestContext {
