@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { HttpClient } from "./http";
 
 // ---------------------------------------------------------------------------
 // Enums
@@ -189,8 +190,8 @@ export interface CollectResult {
 }
 
 export interface RequestContext {
-  userAgent: string;
-  delayMs: number;
+  /** Shared per-run client: User-Agent, per-source delay, 429 stop rule. */
+  http: HttpClient;
 }
 
 export interface SourceCollector {

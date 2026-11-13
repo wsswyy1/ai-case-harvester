@@ -14,6 +14,8 @@ export interface AppEnv {
   usecasecnApiUrl: string | undefined;
   usecasecnIngestToken: string | undefined;
   databasePath: string;
+  /** Per-API request spacing overrides in milliseconds. */
+  delaysMs: Partial<Record<"hn" | "github" | "reddit" | "usecasecn", number>>;
 }
 
 export const SECRET_ENV_NAMES = [
@@ -48,6 +50,10 @@ const optionalHttpUrl = optionalString.refine(
   { message: "must be an http(s) URL" }
 );
 
+const optionalDelay = optionalString
+  .transform((v) => (v === undefined ? undefined : Number(v)))
+  .pipe(z.number().int().min(0).max(600_000).optional());
+
 const EnvSchema = z.object({
   NODE_ENV: z
     .string()
@@ -61,7 +67,11 @@ const EnvSchema = z.object({
   GITHUB_TOKEN: optionalString,
   USECASECN_API_URL: optionalHttpUrl,
   USECASECN_INGEST_TOKEN: optionalString,
-  DATABASE_PATH: optionalString.transform((v) => v ?? "./data/harvester.db")
+  DATABASE_PATH: optionalString.transform((v) => v ?? "./data/harvester.db"),
+  HN_DELAY_MS: optionalDelay,
+  GITHUB_DELAY_MS: optionalDelay,
+  REDDIT_DELAY_MS: optionalDelay,
+  USECASECN_DELAY_MS: optionalDelay
 });
 
 export function loadEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
@@ -82,7 +92,17 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
     githubToken: e.GITHUB_TOKEN,
     usecasecnApiUrl: e.USECASECN_API_URL,
     usecasecnIngestToken: e.USECASECN_INGEST_TOKEN,
-    databasePath: e.DATABASE_PATH
+    databasePath: e.DATABASE_PATH,
+    delaysMs: Object.fromEntries(
+      (
+        [
+          ["hn", e.HN_DELAY_MS],
+          ["github", e.GITHUB_DELAY_MS],
+          ["reddit", e.REDDIT_DELAY_MS],
+          ["usecasecn", e.USECASECN_DELAY_MS]
+        ] as const
+      ).filter(([, v]) => v !== undefined)
+    )
   };
 }
 
