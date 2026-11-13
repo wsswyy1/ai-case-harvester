@@ -1,0 +1,162 @@
+{
+  "total_count": 20266,
+  "incomplete_results": false,
+  "items": [
+    {
+      "id": 1443650212,
+      "name": "gputaskman",
+      "full_name": "shanselman/gputaskman",
+      "private": false,
+      "html_url": "https://github.com/shanselman/gputaskman",
+      "description": "A GPU task manager for Windows, Linux, and WSL: per-process VRAM, GPU activity, and LLM model/KV-cache insights (Windows AMD and NVIDIA).",
+      "fork": false,
+      "homepage": null,
+      "created_at": "2026-11-03T00:49:34Z",
+      "pushed_at": "2026-11-12T21:19:45Z",
+      "stargazers_count": 2762,
+      "language": "Python",
+      "topics": [],
+      "archived": false,
+      "owner": {
+        "login": "shanselman",
+        "type": "User",
+        "html_url": "https://github.com/shanselman"
+      }
+    },
+    {
+      "id": 1444005452,
+      "name": "sand3d",
+      "full_name": "Sandflow-ai/sand3d",
+      "private": false,
+      "html_url": "https://github.com/Sandflow-ai/sand3d",
+      "description": "3D modeling in Python, built for LLMs.",
+      "fork": false,
+      "homepage": "https://sandflow.ai/sand3d/",
+      "created_at": "2026-11-03T08:23:03Z",
+      "pushed_at": "2026-11-12T16:28:07Z",
+      "stargazers_count": 1924,
+      "language": "HTML",
+      "topics": [
+        "3d",
+        "blender",
+        "cad",
+        "llm",
+        "procedural-modeling",
+        "python",
+        "usd"
+      ],
+      "archived": false,
+      "owner": {
+        "login": "Sandflow-ai",
+        "type": "Organization",
+        "html_url": "https://github.com/Sandflow-ai"
+      }
+    },
+    {
+      "id": 1448217653,
+      "name": "auto-ontology-mcp",
+      "full_name": "gogoymh/auto-ontology-mcp",
+      "private": false,
+      "html_url": "https://github.com/gogoymh/auto-ontology-mcp",
+      "description": "NVIDIA Auto Ontology's semantic layer and a personal knowledge base as an MCP server for Claude, ChatGPT and other MCP clients. No LLM API key needed.",
+      "fork": false,
+      "homepage": null,
+      "created_at": "2026-11-06T12:09:07Z",
+      "pushed_at": "2026-11-13T02:16:30Z",
+      "stargazers_count": 383,
+      "language": "Python",
+      "topics": [
+        "chatgpt",
+        "claude",
+        "mcp",
+        "mcp-server",
+        "model-context-protocol",
+        "ontology",
+        "semantic-layer",
+        "text-to-sql"
+      ],
+      "archived": false,
+      "owner": {
+        "login": "gogoymh",
+        "type": "User",
+        "html_url": "https://github.com/gogoymh"
+      }
+    },
+    {
+      "id": 1445286453,
+      "name": "smolmaxxing",
+      "full_name": "hyperionaidev/smolmaxxing",
+      "private": false,
+      "html_url": "https://github.com/hyperionaidev/smolmaxxing",
+      "description": "maxxing the ability to run different LLMs on the smallest devices possible",
+      "fork": false,
+      "homepage": null,
+      "created_at": "2026-11-04T07:09:41Z",
+      "pushed_at": "2026-11-12T21:47:04Z",
+      "stargazers_count": 325,
+      "language": "C",
+      "topics": [],
+      "archived": false,
+      "owner": {
+        "login": "hyperionaidev",
+        "type": "Organization",
+        "html_url": "https://github.com/hyperionaidev"
+      }
+    },
+    {
+      "id": 1447398642,
+      "name": "sakutto",
+      "full_name": "jammaru/sakutto",
+      "private": false,
+      "html_url": "https://github.com/jammaru/sakutto",
+      "description": "A browser extension for easy on-device translation with a local LLM (PLaMo). Private, free, no server needed.",
+      "fork": false,
+      "homepage": "https://chrome.google.com/webstore/detail/mhlbjjijfkoghmcjndgdimhdlfkhadfl",
+      "created_at": "2026-11-05T19:00:10Z",
+      "pushed_at": "2026-11-13T03:08:52Z",
+      "stargazers_count": 235,
+      "language": "TypeScript",
+      "topics": [
+        "browser-extension",
+        "chrome-extension",
+        "firefox-extension",
+        "japanese",
+        "llama-cpp",
+        "local-llm",
+        "on-device-ai",
+        "plamo",
+        "privacy",
+        "translation",
+        "wasm",
+        "webgpu"
+      ],
+      "archived": false,
+      "owner": {
+        "login": "jammaru",
+        "type": "User",
+        "html_url": "https://github.com/jammaru"
+      }
+    },
+    {
+      "id": 1449236070,
+      "name": "ai-engineering-hub",
+      "full_name": "ngophatneknha/ai-engineering-hub",
+      "private": false,
+      "html_url": "https://github.com/ngophatneknha/ai-engineering-hub",
+      "description": "In-depth tutorials on LLMs, RAGs and real-world AI agent applications (Personal learning hub)",
+      "fork": false,
+      "homepage": null,
+      "created_at": "2026-11-07T10:08:24Z",
+      "pushed_at": "2026-11-07T10:48:50Z",
+      "stargazers_count": 180,
+      "language": "MDX",
+      "topics": [],
+      "archived": false,
+      "owner": {
+        "login": "ngophatneknha",
+        "type": "User",
+        "html_url": "https://github.com/ngophatneknha"
+      }
+    }
+  ]
+}
