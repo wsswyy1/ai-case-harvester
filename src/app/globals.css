@@ -10,7 +10,13 @@
   --color-pumpkin: #e07a3d;
   --color-hex: #d9b8ff;
   --color-ghoul: #6b4f8f;
-  --font-serif: Georgia, "Times New Roman", serif;
+  --font-serif: Georgia, "Times New Roman", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", serif;
+  --font-zh: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
+}
+
+/* Chinese one-liners read better in a CJK sans face than in the Latin serif. */
+:lang(zh) {
+  font-family: var(--font-zh);
 }
 
 html {
