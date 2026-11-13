@@ -1,3 +1,4 @@
+import { canonicalRepoKey } from "./dedupe";
 import type { RawCandidate } from "./types";
 
 export interface EligibleCandidate extends RawCandidate {
@@ -21,16 +22,6 @@ export type EligibilityResult =
 // ---------------------------------------------------------------------------
 // Project link classification
 // ---------------------------------------------------------------------------
-
-/** Git hosts where `/owner/repo` identifies a repository. */
-export const REPO_HOSTS = new Set(["github.com", "gitlab.com", "gitee.com", "codeberg.org", "bitbucket.org"]);
-
-/** First path segments on GitHub that are product pages, not users. */
-const GITHUB_RESERVED = new Set([
-  "about", "apps", "blog", "collections", "contact", "customer-stories", "enterprise", "events",
-  "explore", "features", "issues", "login", "marketplace", "new", "notifications", "orgs", "pricing",
-  "pulls", "search", "security", "settings", "signup", "site", "sponsors", "team", "topics", "trending"
-]);
 
 /**
  * Model and AI tool vendors. Their pages count as project links only when the
@@ -80,18 +71,7 @@ function pathSegments(url: URL): string[] {
 
 /** True when `url` points at a repository (`host/owner/repo`) on a known git host. */
 export function isRepositoryUrl(raw: string): boolean {
-  let url: URL;
-  try {
-    url = new URL(raw);
-  } catch {
-    return false;
-  }
-  const host = normalizedHost(url);
-  if (!REPO_HOSTS.has(host)) return false;
-  const [owner, repo] = pathSegments(url);
-  if (!owner || !repo) return false;
-  if (host === "github.com" && GITHUB_RESERVED.has(owner.toLowerCase())) return false;
-  return true;
+  return canonicalRepoKey(raw) !== null;
 }
 
 export type LinkKind = "repository" | "project" | "generic" | "non_project" | "invalid";
