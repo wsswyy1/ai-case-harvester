@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { USECASECN_CATEGORIES, type CaseRecord, type SourceName, type UsecasecnCategory } from "@/lib/types";
 import { CaseCard } from "./CaseCard";
 import { HarvestPanel } from "./HarvestPanel";
+import { ShipPanel } from "./ShipPanel";
 
 const SOURCE_OPTIONS: { value: SourceName; label: string }[] = [
   { value: "hn", label: "Hacker News" },
@@ -91,6 +92,7 @@ export function ReviewQueue({ initialCases, initialError = null }: { initialCase
   return (
     <div className="mt-6 flex flex-col gap-6">
       <HarvestPanel onFinished={() => void reload(filters)} />
+      <ShipPanel />
 
       <section aria-label="Filters" className="flex flex-wrap items-center gap-3 text-sm">
         <select
