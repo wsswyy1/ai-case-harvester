@@ -6,7 +6,7 @@ A [Kiroween 2026](https://kiro.dev) **Frankenstein** project: three unlike parts
 2. **Classifier** talks to any OpenAI-compatible LLM, judges real-case vs not, tags domain and tools, writes a one-line Chinese summary, and dedupes by canonical URL or repository.
 3. **Review dashboard** is a dark, Halloween-themed queue. You approve or reject. Approved cases export as JSON, or can be pushed to the usecasecn **pending** queue. Nothing is published automatically.
 
-This repository is a specification-first skeleton. Implementation follows `.kiro/specs/case-harvester/tasks.md`.
+All tasks in `.kiro/specs/case-harvester/tasks.md` are implemented.
 
 ## Short brief (中文)
 
@@ -21,7 +21,7 @@ This repository is a specification-first skeleton. Implementation follows `.kiro
 
 ## Setup
 
-This tree is a spec-first skeleton: types and route stubs are in place, but dependencies are not pinned yet. Open the folder in Kiro, confirm the hook files load (see `.kiro/hooks/README.md`), then run task 1 in `.kiro/specs/case-harvester/tasks.md` to scaffold Next.js, Tailwind, Vitest, and SQLite. After that:
+Stack: Next.js 16 (App Router), React 19, Tailwind CSS 4, SQLite via `better-sqlite3`, Zod 4, Vitest. Node.js 20.9 or later.
 
 ```bash
 cp .env.example .env
@@ -33,9 +33,30 @@ npm run dev
 Open [http://localhost:3000/review](http://localhost:3000/review). Start a harvest from the dashboard, or run:
 
 ```bash
-npm run harvest
-npm test
+npm run harvest -- --sources hn,github --since-hours 72 --limit 15
+npm test          # no live network; fetch is stubbed in tests
+npm run typecheck
+npm run lint
 ```
+
+Without `LLM_*` set, harvested posts are stored as `harvested` and the run is reported as partial; they reach the review queue only after classification.
+
+## HTTP API
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/harvest` | `{ sources?, since? \| sinceHours?, limit?, query? }` → run summary |
+| `GET` | `/api/cases?status=&source=&category=&minConfidence=` | List cases (`status` may be comma-separated) |
+| `POST` | `/api/cases/:id/review` | `{ "decision": "approved" \| "rejected", "reason"?: string }`, `needs_review` only |
+| `GET` | `/api/export?status=approved[&ids=a,b][&download=1]` | JSON array of approved cases (read-only) |
+| `POST` | `/api/export` | `{ ids?, includeExported?, markExported? }`; can mark cases `exported` |
+| `POST` | `/api/push` | `{ ids?, batchId? }`; sends approved cases to `{USECASECN_API_URL}/submissions` (pending only) |
+
+## Known limits
+
+- Reddit's anonymous `.json` listings may answer 403 from some networks. The collector records this as a failure and the run continues; it never logs in. The Reddit test fixture is synthetic for this reason (see `tests/fixtures/README.md`).
+- The accepted `source_url` kinds for usecasecn are taken from the steering rules (HN item, GitHub repository). If the official schema lists more kinds, extend `sourceUrlKind` in `src/ingest/usecasecn.ts`.
+- Mutating routes have no auth. Run the app on loopback only.
 
 Do not commit `.env`. Tokens must never appear in source, logs, or the dashboard.
 
@@ -66,7 +87,11 @@ A shot-by-shot outline lives in [`docs/demo-script.md`](docs/demo-script.md).
 
 Placeholder — fill this in as you implement, and keep it honest for the judges.
 
-This repository started as a hand-written Kiro-style spec and skeleton (requirements, design, tasks, steering, and example hooks) so work could begin before the IDE was installed. After opening the project in Kiro, record:
+This repository started as a hand-written Kiro-style spec and skeleton (requirements, design, tasks, steering, and example hooks) so work could begin before the IDE was installed.
+
+Progress so far: Kiro (web, Vibe mode) implemented tasks 1–13 from `.kiro/specs/case-harvester/tasks.md` in order, with one commit per task or sub-task, following the steering files (`tech.md`, `structure.md`, `usecasecn-rules.md`). One design deviation: deduplication runs before classification so duplicates never cost an LLM call. The hook JSON files were not exercised in that session.
+
+Still to record after opening the project in the Kiro IDE:
 
 - How the `.kiro/specs/case-harvester/` documents were reviewed or regenerated
 - Which steering files (especially `usecasecn-rules.md`) guided classification and ingest
