@@ -16,7 +16,7 @@ const SECRET_PATTERNS: RegExp[] = [
   // GitHub tokens: ghp_, gho_, ghu_, ghs_, ghr_, github_pat_
   /\b(?:gh[pousr]_[A-Za-z0-9]{16,}|github_pat_[A-Za-z0-9_]{20,})/g,
   // key=value pairs in query strings or text for common secret names
-  /\b((?:api[_-]?key|access[_-]?token|token|secret|password)\s*[=:]\s*)[^\s&"',;}]+/gi
+  /\b((?:api[_-]?key|access[_-]?token|refresh[_-]?token|token|secret|password)["']?\s*[=:]\s*["']?)[^\s&"',;}]+/gi
 ];
 
 /**
