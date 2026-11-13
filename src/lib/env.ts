@@ -14,6 +14,8 @@ export interface AppEnv {
   usecasecnApiUrl: string | undefined;
   usecasecnIngestToken: string | undefined;
   databasePath: string;
+  /** Public subreddits the Reddit collector may read. */
+  redditSubreddits: string[];
   /** Per-API request spacing overrides in milliseconds. */
   delaysMs: Partial<Record<"hn" | "github" | "reddit" | "usecasecn", number>>;
 }
@@ -50,6 +52,8 @@ const optionalHttpUrl = optionalString.refine(
   { message: "must be an http(s) URL" }
 );
 
+export const DEFAULT_SUBREDDITS = ["LocalLLaMA", "ChatGPTCoding", "SideProject"];
+
 const optionalDelay = optionalString
   .transform((v) => (v === undefined ? undefined : Number(v)))
   .pipe(z.number().int().min(0).max(600_000).optional());
@@ -68,13 +72,23 @@ const EnvSchema = z.object({
   USECASECN_API_URL: optionalHttpUrl,
   USECASECN_INGEST_TOKEN: optionalString,
   DATABASE_PATH: optionalString.transform((v) => v ?? "./data/harvester.db"),
+  REDDIT_SUBREDDITS: optionalString
+    .transform((v) =>
+      (v ?? DEFAULT_SUBREDDITS.join(","))
+        .split(",")
+        .map((s) => s.trim().replace(/^r\//i, ""))
+        .filter(Boolean)
+    )
+    .pipe(z.array(z.string().regex(/^[A-Za-z0-9_]{2,21}$/, "must be a list of subreddit names"))),
   HN_DELAY_MS: optionalDelay,
   GITHUB_DELAY_MS: optionalDelay,
   REDDIT_DELAY_MS: optionalDelay,
   USECASECN_DELAY_MS: optionalDelay
 });
 
-export function loadEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
+export type EnvSource = Record<string, string | undefined>;
+
+export function loadEnv(source: EnvSource = process.env): AppEnv {
   const parsed = EnvSchema.safeParse(source);
   if (!parsed.success) {
     // Report variable names and rule messages only. Never echo input values.
@@ -93,6 +107,7 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
     usecasecnApiUrl: e.USECASECN_API_URL,
     usecasecnIngestToken: e.USECASECN_INGEST_TOKEN,
     databasePath: e.DATABASE_PATH,
+    redditSubreddits: e.REDDIT_SUBREDDITS,
     delaysMs: Object.fromEntries(
       (
         [

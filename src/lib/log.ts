@@ -1,4 +1,4 @@
-import { SECRET_ENV_NAMES } from "./env";
+import { SECRET_ENV_NAMES, type EnvSource } from "./env";
 
 const REDACTED = "[redacted]";
 
@@ -24,7 +24,7 @@ const SECRET_PATTERNS: RegExp[] = [
  * Values shorter than 4 characters are not used for literal replacement to
  * avoid shredding unrelated text.
  */
-export function redact(text: string, env: NodeJS.ProcessEnv = process.env): string {
+export function redact(text: string, env: EnvSource = process.env): string {
   let out = text;
   for (const name of SECRET_ENV_NAMES) {
     const value = env[name]?.trim();
