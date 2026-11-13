@@ -14,6 +14,8 @@ export interface AppEnv {
   usecasecnApiUrl: string | undefined;
   usecasecnIngestToken: string | undefined;
   databasePath: string;
+  /** Sources enabled for harvest runs. */
+  harvestSources: ("hn" | "github" | "reddit")[];
   /** Public subreddits the Reddit collector may read. */
   redditSubreddits: string[];
   /** Per-API request spacing overrides in milliseconds. */
@@ -52,6 +54,9 @@ const optionalHttpUrl = optionalString.refine(
   { message: "must be an http(s) URL" }
 );
 
+// Kept local (not imported from types.ts) so env has no domain dependencies.
+const ALL_SOURCES = ["hn", "github", "reddit"] as const;
+
 export const DEFAULT_SUBREDDITS = ["LocalLLaMA", "ChatGPTCoding", "SideProject"];
 
 const optionalDelay = optionalString
@@ -72,6 +77,14 @@ const EnvSchema = z.object({
   USECASECN_API_URL: optionalHttpUrl,
   USECASECN_INGEST_TOKEN: optionalString,
   DATABASE_PATH: optionalString.transform((v) => v ?? "./data/harvester.db"),
+  HARVEST_SOURCES: optionalString
+    .transform((v) =>
+      (v ?? ALL_SOURCES.join(","))
+        .split(",")
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean)
+    )
+    .pipe(z.array(z.enum(ALL_SOURCES))),
   REDDIT_SUBREDDITS: optionalString
     .transform((v) =>
       (v ?? DEFAULT_SUBREDDITS.join(","))
@@ -107,6 +120,7 @@ export function loadEnv(source: EnvSource = process.env): AppEnv {
     usecasecnApiUrl: e.USECASECN_API_URL,
     usecasecnIngestToken: e.USECASECN_INGEST_TOKEN,
     databasePath: e.DATABASE_PATH,
+    harvestSources: [...new Set(e.HARVEST_SOURCES)],
     redditSubreddits: e.REDDIT_SUBREDDITS,
     delaysMs: Object.fromEntries(
       (
