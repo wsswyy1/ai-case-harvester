@@ -147,7 +147,9 @@ export const HarvestRunSchema = z.object({
     classified: z.number().int().nonnegative(),
     queued: z.number().int().nonnegative(),
     duplicates: z.number().int().nonnegative(),
-    classifyFailed: z.number().int().nonnegative()
+    classifyFailed: z.number().int().nonnegative(),
+    /** Kept but left `harvested` because the classifier was missing or stopped on 429. */
+    unclassified: z.number().int().nonnegative().default(0)
   }),
   /** True when a 429, config error, or per-item failure left the run incomplete. */
   partial: z.boolean(),
