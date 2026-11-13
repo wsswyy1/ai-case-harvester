@@ -1,0 +1,18 @@
+{
+  "name": "ai-case-harvester",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frankenstein harvester that stitches public-source collectors, an LLM classifier, and a Halloween review dashboard for usecasecn.",
+  "license": "MIT",
+  "author": "SHANG WU",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "harvest": "tsx src/cli/harvest.ts"
+  }
+}

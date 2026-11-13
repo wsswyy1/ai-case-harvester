@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "update-readme-on-spec-change",
+      "description": "When a spec file is saved, ask the agent to refresh the How Kiro was used section of README.md. Confirm this v1 hook schema in the installed Kiro if the file does not load.",
+      "trigger": "PostFileSave",
+      "matcher": "\\.kiro/specs/.*\\.md$",
+      "action": {
+        "type": "agent",
+        "prompt": "A file under .kiro/specs/ was just saved. Update only the 'How Kiro was used' section in README.md (and the short Chinese brief if that English summary changed) so it matches the current requirements, design, and task progress. Do not invent completed work. Do not modify source code, tests, or other docs. Do not create a commit. Report the lines you changed."
+      },
+      "enabled": true
+    }
+  ]
+}

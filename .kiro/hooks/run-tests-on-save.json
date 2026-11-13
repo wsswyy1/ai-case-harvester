@@ -1,0 +1,17 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "run-tests-on-save",
+      "description": "Run the Vitest suite after a TypeScript source or test file is saved. Confirm this v1 hook schema in the installed Kiro if the file does not load.",
+      "trigger": "PostFileSave",
+      "matcher": "(src|tests)/.*\\.(ts|tsx)$",
+      "action": {
+        "type": "command",
+        "command": "npm test -- --reporter=dot"
+      },
+      "timeout": 120,
+      "enabled": true
+    }
+  ]
+}

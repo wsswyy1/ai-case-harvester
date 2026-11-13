@@ -1,0 +1,33 @@
+# Dependencies and build
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+.vercel
+
+# Local secrets and databases
+.env
+.env.local
+.env.*.local
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+# Logs and OS
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Keep Kiro artifacts in version control — judges inspect .kiro/
+# Do not add .kiro to this file.
