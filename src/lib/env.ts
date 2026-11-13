@@ -1,8 +1,12 @@
+import { z } from "zod";
+
 /**
  * Read and validate environment variables.
- * Never log secret values from this module.
+ * Never log secret values from this module. Validation errors name the
+ * variable, never its value.
  */
 export interface AppEnv {
+  nodeEnv: "development" | "production" | "test";
   llmBaseUrl: string | undefined;
   llmApiKey: string | undefined;
   llmModel: string | undefined;
@@ -18,31 +22,98 @@ export const SECRET_ENV_NAMES = [
   "USECASECN_INGEST_TOKEN"
 ] as const;
 
+export class ConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ConfigError";
+  }
+}
+
+/** Treat empty or whitespace-only values as unset. */
+const optionalString = z
+  .string()
+  .optional()
+  .transform((v) => (v === undefined || v.trim() === "" ? undefined : v.trim()));
+
+const optionalHttpUrl = optionalString.refine(
+  (v) => {
+    if (v === undefined) return true;
+    try {
+      const u = new URL(v);
+      return u.protocol === "https:" || u.protocol === "http:";
+    } catch {
+      return false;
+    }
+  },
+  { message: "must be an http(s) URL" }
+);
+
+const EnvSchema = z.object({
+  NODE_ENV: z
+    .string()
+    .optional()
+    .transform((v): AppEnv["nodeEnv"] =>
+      v === "production" || v === "test" ? v : "development"
+    ),
+  LLM_BASE_URL: optionalHttpUrl,
+  LLM_API_KEY: optionalString,
+  LLM_MODEL: optionalString,
+  GITHUB_TOKEN: optionalString,
+  USECASECN_API_URL: optionalHttpUrl,
+  USECASECN_INGEST_TOKEN: optionalString,
+  DATABASE_PATH: optionalString.transform((v) => v ?? "./data/harvester.db")
+});
+
 export function loadEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
-  // TODO: validate with Zod once dependencies are installed.
+  const parsed = EnvSchema.safeParse(source);
+  if (!parsed.success) {
+    // Report variable names and rule messages only. Never echo input values.
+    const problems = parsed.error.issues
+      .map((issue) => `${issue.path.join(".") || "env"}: ${issue.message}`)
+      .join("; ");
+    throw new ConfigError(`Invalid environment configuration (${problems}).`);
+  }
+  const e = parsed.data;
   return {
-    llmBaseUrl: source.LLM_BASE_URL || undefined,
-    llmApiKey: source.LLM_API_KEY || undefined,
-    llmModel: source.LLM_MODEL || undefined,
-    githubToken: source.GITHUB_TOKEN || undefined,
-    usecasecnApiUrl: source.USECASECN_API_URL || undefined,
-    usecasecnIngestToken: source.USECASECN_INGEST_TOKEN || undefined,
-    databasePath: source.DATABASE_PATH || "./data/harvester.db"
+    nodeEnv: e.NODE_ENV,
+    llmBaseUrl: e.LLM_BASE_URL,
+    llmApiKey: e.LLM_API_KEY,
+    llmModel: e.LLM_MODEL,
+    githubToken: e.GITHUB_TOKEN,
+    usecasecnApiUrl: e.USECASECN_API_URL,
+    usecasecnIngestToken: e.USECASECN_INGEST_TOKEN,
+    databasePath: e.DATABASE_PATH
   };
 }
 
-export function assertClassifierConfig(env: AppEnv): void {
-  if (!env.llmBaseUrl || !env.llmApiKey || !env.llmModel) {
-    throw new Error(
-      "Classifier is not configured. Set LLM_BASE_URL, LLM_API_KEY, and LLM_MODEL."
+export function assertClassifierConfig(env: AppEnv): asserts env is AppEnv & {
+  llmBaseUrl: string;
+  llmApiKey: string;
+  llmModel: string;
+} {
+  const missing = [
+    !env.llmBaseUrl && "LLM_BASE_URL",
+    !env.llmApiKey && "LLM_API_KEY",
+    !env.llmModel && "LLM_MODEL"
+  ].filter(Boolean);
+  if (missing.length > 0) {
+    throw new ConfigError(
+      `Classifier is not configured. Missing: ${missing.join(", ")}. Set LLM_BASE_URL, LLM_API_KEY, and LLM_MODEL.`
     );
   }
 }
 
-export function assertIngestConfig(env: AppEnv): void {
-  if (!env.usecasecnApiUrl || !env.usecasecnIngestToken) {
-    throw new Error(
-      "Push is not configured. Set USECASECN_API_URL and USECASECN_INGEST_TOKEN, or use JSON export."
+export function assertIngestConfig(env: AppEnv): asserts env is AppEnv & {
+  usecasecnApiUrl: string;
+  usecasecnIngestToken: string;
+} {
+  const missing = [
+    !env.usecasecnApiUrl && "USECASECN_API_URL",
+    !env.usecasecnIngestToken && "USECASECN_INGEST_TOKEN"
+  ].filter(Boolean);
+  if (missing.length > 0) {
+    throw new ConfigError(
+      `Push is not configured. Missing: ${missing.join(", ")}. JSON export is still available.`
     );
   }
 }

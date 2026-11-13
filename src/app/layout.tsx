@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import "./globals.css";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "AI Case Harvester",
   description: "Halloween review desk for real AI use cases destined for usecasecn."
 };
@@ -8,17 +10,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body
-        style={{
-          margin: 0,
-          minHeight: "100vh",
-          background: "#0b0708",
-          color: "#f3e6d0",
-          fontFamily: "Georgia, 'Times New Roman', serif"
-        }}
-      >
-        {children}
-      </body>
+      <body className="m-0 min-h-screen bg-crypt font-serif text-bone antialiased">{children}</body>
     </html>
   );
 }

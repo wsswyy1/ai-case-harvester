@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/* Halloween palette. Decorative only: status names stay needs_review / approved / rejected. */
+@theme {
+  --color-crypt: #0b0708;
+  --color-tomb: #140c0e;
+  --color-grave: #3a2420;
+  --color-bone: #f3e6d0;
+  --color-ash: #b9a394;
+  --color-pumpkin: #e07a3d;
+  --color-hex: #d9b8ff;
+  --color-ghoul: #6b4f8f;
+  --font-serif: Georgia, "Times New Roman", serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-crypt);
+  color: var(--color-bone);
+  font-family: var(--font-serif);
+}
